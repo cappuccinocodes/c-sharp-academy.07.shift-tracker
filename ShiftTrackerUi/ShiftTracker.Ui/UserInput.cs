@@ -1,4 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
+
+using System.Net;
+using RestSharp;
+
 namespace ShiftTracker.Ui
 {
     internal class UserInput
@@ -42,12 +46,12 @@ namespace ShiftTracker.Ui
                     case 2:
                         ProcessAddShift();
                         break;
-                    //case 3:
-                    //    ProcessDeleteCategory();
-                    //    break;
-                    //case 4:
-                    //    ProcessCategoryUpdate();
-                    //    break;
+                    case 3:
+                        ProcessGetShiftById();
+                        break;
+                    case 4:
+                        //ProcessDeleteShift();
+                        break;
                     //case 5:
                     //    contactsController.ViewContacts();
                     //    break;
@@ -121,12 +125,12 @@ namespace ShiftTracker.Ui
         //    contactsController.AddContact(contact);
         //}
 
-        //private void ProcessDeleteContact()
+        //private void ProcessDeleteShift()
         //{
-        //    contactsController.ViewContacts();
+        //    shiftsService.GetShifts();
 
         //    int contactId = GetIntegerInput("Please add id of the category you want to delete.");
-        //    var contactToDelete = contactsController.GetContactById(contactId);
+        //    var contactToDelete = shiftsService.DeleteShift(contactId);
 
         //    while (contactToDelete == null)
         //    {
@@ -160,20 +164,19 @@ namespace ShiftTracker.Ui
         //    contactsController.UpdateContact(contactToUpdate);
         //}
 
-        //private void ProcessContactsByCategory()
-        //{
-        //    contactsController.ViewCategories();
+        private void ProcessGetShiftById()
+        {
+            shiftsService.GetShifts();
 
-        //    int categoryId = GetIntegerInput("Please add id of the category you want to view.");
-        //    var contactToDelete = contactsController.GetCategoryById(categoryId);
+            int shiftId = GetIntegerInput("Please add id of the shift you want to view.");
+            
+            var shiftResponse = shiftsService.GetShiftById(shiftId);
 
-        //    while (contactToDelete == null)
-        //    {
-        //        categoryId = GetIntegerInput($"A category with the id {categoryId} doesn't exist. Try again.");
-        //    }
-
-        //    contactsController.ViewContactsByCategoryId(categoryId);
-        //}
+            while (shiftResponse.StatusCode == HttpStatusCode.NotFound)
+            {
+                shiftId = GetIntegerInput($"A shift with the id {shiftId} doesn't exist. Try again.");
+            }
+        }
 
         private string GetStringInput(string message)
         {

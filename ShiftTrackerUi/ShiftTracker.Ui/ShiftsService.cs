@@ -29,6 +29,14 @@ namespace ShiftTracker.Ui
             }
         }
 
+        public IRestResponse<Shift> GetShiftById(int id)
+        {
+
+            var request = new RestRequest($"shifts/{id}");
+            var response = client.Execute<Shift>(request);
+            return response;
+        }
+
         public void AddShift(Shift shift)
         {
             var request = new RestRequest("shifts", Method.POST);
