@@ -23,24 +23,8 @@ namespace ShiftTracker.Ui
                 string rawResponse = response.Content;
 
                 var serialize = JsonConvert.DeserializeObject<List<Shift>>(rawResponse);
-
-                
-
-                //foreach (var shift in returnedList)
-                //{
-                //    printList.Add(new Shift
-                //    {
-                //        ShiftId = shift.ShiftId,
-                //        Start = shift.Start,
-                //        End = shift.End,
-                //        Pay = shift.Pay,
-                //        Minutes = shift.Minutes,
-                //        Location = shift.Location
-                //    });
-                //}
-
+              
                 TableVisualisationEngine.ShowTable(serialize, "Categories Menu");
-
 
             }
         }

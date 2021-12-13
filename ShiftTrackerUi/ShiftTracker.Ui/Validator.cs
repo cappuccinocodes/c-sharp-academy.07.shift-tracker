@@ -40,21 +40,14 @@ namespace ShiftTracker.Ui
             return true;
         }
 
-        internal static bool IsUpdateStringValid(string stringInput)
+        internal static bool IsDateTimeValid(string stringInput)
         {
-            foreach (char c in stringInput)
-            {
-                if ((!Char.IsLetter(c) && c != '/' && c != '0'))
-                    return false;
-            }
-
-            if (String.IsNullOrEmpty(stringInput))
+            if (String.IsNullOrEmpty(stringInput) || !DateTime.TryParse(stringInput, out _))
             {
                 return false;
             }
 
             return true;
         }
-
     }
 }

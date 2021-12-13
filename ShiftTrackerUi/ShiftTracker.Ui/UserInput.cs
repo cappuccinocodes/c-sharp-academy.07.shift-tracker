@@ -12,8 +12,8 @@ namespace ShiftTracker.Ui
                 Console.WriteLine("\n\nMAIN MENU");
                 Console.WriteLine("\nWhat would you like to do?");
                 Console.WriteLine("\nType 0 to Close Application.");
-                Console.WriteLine("Type 1 to View Categories");
-                Console.WriteLine("Type 2 to Add Category");
+                Console.WriteLine("Type 1 to View Shifts");
+                Console.WriteLine("Type 2 to Add Shift");
                 //Console.WriteLine("Type 3 to Delete Category");
                 //Console.WriteLine("Type 4 to Update Category");
                 //Console.WriteLine("Type 5 to View Contacts");
@@ -39,9 +39,9 @@ namespace ShiftTracker.Ui
                     case 1:
                         shiftsService.GetShifts();
                         break;
-                    //case 2:
-                    //    ProcessAddCategory();
-                    //    break;
+                    case 2:
+                        ProcessAddShift();
+                        break;
                     //case 3:
                     //    ProcessDeleteCategory();
                     //    break;
@@ -73,26 +73,24 @@ namespace ShiftTracker.Ui
             }
         }
 
-        //private void ProcessAddCategory()
-        //{
-        //    string categoryName = GetStringInput("Please add category name.");
-        //    contactsController.AddCategory(categoryName);
-        //}
+        // https://stackoverflow.com/questions/36926867/deserializing-json-into-a-list-of-objects-cannot-create-and-populate-list-type
 
-        //private void ProcessDeleteCategory()
-        //{
-        //    contactsController.ViewCategories();
+        private void ProcessAddShift()
+        {
+            shiftsService.GetShifts();
 
-        //    int categoryId = GetIntegerInput("Please add id of the category you want to delete.");
-        //    var category = contactsController.GetCategoryById(categoryId);
+            Shift shift = new();
+            shift.Start = GetDateTimeInput("Please add shift start");
+            shift.End = GetDateTimeInput("Please add shift start");
+            shift.Location = GetStringInput("Please shift location.");
+            shift.Minutes = 0;
+            //shift.Pay = GetMoneyInput("Please shift location.");
+            //    contact.FirstName = GetStringInput("Please type first name.");
+            //    contact.LastName = GetStringInput("Please type last name.");
+            //    contact.Number = GetPhoneInput("Please type phone number.");
 
-        //    while (category == null)
-        //    {
-        //        categoryId = GetIntegerInput($"A category with the id {categoryId} doesn't exist. Try again.");
-        //    }
-
-        //    contactsController.DeleteCategory(category);
-        //}
+            //    contactsController.AddContact(contact);
+        }
 
         //private void ProcessCategoryUpdate()
         //{
@@ -190,19 +188,19 @@ namespace ShiftTracker.Ui
             return input;
         }
 
-        private string GetUpdateStringInput(string message)
-        {
-            Console.WriteLine(message);
-            string input = Console.ReadLine();
+        //private string GetUpdateStringInput(string message)
+        //{
+        //    Console.WriteLine(message);
+        //    string input = Console.ReadLine();
 
-            while (!Validator.IsUpdateStringValid(input))
-            {
-                Console.WriteLine("\nInvalid input");
-                input = Console.ReadLine();
-            }
+        //    while (!Validator.IsUpdateStringValid(input))
+        //    {
+        //        Console.WriteLine("\nInvalid input");
+        //        input = Console.ReadLine();
+        //    }
 
-            return input;
-        }
+        //    return input;
+        //}
 
        private int GetIntegerInput(string message)
         {
@@ -217,5 +215,19 @@ namespace ShiftTracker.Ui
 
             return Int32.Parse(idInput);
         }
+
+       private DateTime GetDateTimeInput(string message)
+       {
+           Console.WriteLine(message);
+           string idInput = Console.ReadLine();
+
+           while (!Validator.IsDateTimeValid(idInput))
+           {
+               Console.WriteLine("\nInvalid date");
+               idInput = Console.ReadLine();
+           }
+
+           return DateTime.Parse(idInput);
+       }
     }
 }
