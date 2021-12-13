@@ -81,15 +81,16 @@ namespace ShiftTracker.Ui
 
             Shift shift = new();
             shift.Start = GetDateTimeInput("Please add shift start");
-            shift.End = GetDateTimeInput("Please add shift start");
-            shift.Location = GetStringInput("Please shift location.");
-            shift.Minutes = 0;
-            //shift.Pay = GetMoneyInput("Please shift location.");
-            //    contact.FirstName = GetStringInput("Please type first name.");
-            //    contact.LastName = GetStringInput("Please type last name.");
-            //    contact.Number = GetPhoneInput("Please type phone number.");
+            shift.End = GetDateTimeInput("Please add shift end");
 
-            //    contactsController.AddContact(contact);
+            while (Validator.IsEndDateValid(shift.Start, shift.End))
+                shift.End = GetDateTimeInput("End date has to be after start date. Try again.");
+
+            shift.Location = GetStringInput("Please add shift location.");
+            shift.Minutes = Helpers.CalculateDuration(shift.Start, shift.End);
+            shift.Pay = GetMoneyInput("Please add your pay for this shift.");
+
+            shiftsService.AddShift(shift);
         }
 
         //private void ProcessCategoryUpdate()
@@ -228,6 +229,20 @@ namespace ShiftTracker.Ui
            }
 
            return DateTime.Parse(idInput);
+       }
+
+       private decimal GetMoneyInput(string message)
+       {
+           Console.WriteLine(message);
+           string idInput = Console.ReadLine();
+
+           while (!Validator.IsMoneyValid(idInput))
+           {
+               Console.WriteLine("\nInvalid pay");
+               idInput = Console.ReadLine();
+           }
+
+           return decimal.Parse(idInput);
        }
     }
 }

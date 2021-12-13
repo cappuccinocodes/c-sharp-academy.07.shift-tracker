@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ShiftTracker.Ui
@@ -48,6 +49,21 @@ namespace ShiftTracker.Ui
             }
 
             return true;
+        }
+
+        internal static bool IsEndDateValid(DateTime start, DateTime end)
+        {   
+            bool isValid = start > end ? true: false ;
+            
+            return isValid;
+        }
+
+        internal static bool IsMoneyValid(string pay)
+        {
+            Regex rgx = new (@"^[0-9]{0,6}(\.[0-9]{1,2})?$");
+            bool isValid = rgx.IsMatch(pay) ? true : false;
+
+            return isValid;
         }
     }
 }

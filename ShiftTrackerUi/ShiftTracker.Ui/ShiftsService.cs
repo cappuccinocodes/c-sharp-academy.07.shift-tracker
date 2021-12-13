@@ -23,10 +23,18 @@ namespace ShiftTracker.Ui
                 string rawResponse = response.Content;
 
                 var serialize = JsonConvert.DeserializeObject<List<Shift>>(rawResponse);
-              
+
                 TableVisualisationEngine.ShowTable(serialize, "Categories Menu");
 
             }
+        }
+
+        public void AddShift(Shift shift)
+        {
+            var request = new RestRequest("shifts", Method.POST);
+            request.AddJsonBody(JsonConvert.SerializeObject(shift));
+            var response = client.Execute<Shift>(request);
+            Console.WriteLine(response.Content);
         }
     }
 }
