@@ -33,12 +33,22 @@ namespace ShiftTracker.Migrations
                     b.Property<DateTime>("End")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Minutes")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Pay")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("Start")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ShiftId");
 
-                    b.ToTable("Shifts");
+                    b.ToTable("Shift");
                 });
 #pragma warning restore 612, 618
         }
