@@ -3,6 +3,7 @@ namespace ShiftTracker.Ui
 {
     internal class UserInput
     {
+        private ShiftsService shiftsService = new();
         internal void MainMenu()
         {
             bool closeApp = false;
@@ -36,7 +37,7 @@ namespace ShiftTracker.Ui
                         closeApp = true;
                         break;
                     case 1:
-                        contactsController.ViewCategories();
+                        shiftsService.GetShifts();
                         break;
                     //case 2:
                     //    ProcessAddCategory();
@@ -203,21 +204,7 @@ namespace ShiftTracker.Ui
             return input;
         }
 
-        private string GetPhoneInput(string phone)
-        {
-            Console.WriteLine(phone);
-            string input = Console.ReadLine();
-
-            while (!Validator.IsPhoneValid(input))
-            {
-                Console.WriteLine("\nInvalid phone");
-                input = Console.ReadLine();
-            }
-
-            return input;
-        }
-
-        private int GetIntegerInput(string message)
+       private int GetIntegerInput(string message)
         {
             Console.WriteLine(message);
             string idInput = Console.ReadLine();
