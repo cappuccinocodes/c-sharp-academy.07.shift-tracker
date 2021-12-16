@@ -50,7 +50,7 @@ namespace ShiftTracker.Ui
                         ProcessDeleteShift();
                         break;
                     case 4:
-                        //ProcessDeleteShift();
+                        ProcessUpdateShift();
                         break;
                     //case 5:
                     //    contactsController.ViewContacts();
@@ -109,6 +109,30 @@ namespace ShiftTracker.Ui
             {
                 shiftId = GetIntegerInput($"A shift with the id {shiftId} doesn't exist. Try again.");
             }
+        }
+
+        private void ProcessUpdateShift()
+        {
+            shiftsService.GetShifts();
+
+            int conId = GetIntegerInput("Please add id of the shift you want to update.");
+            var contactToUpdate = ById(conId);
+
+            while (contactToUpdate == null)
+            {
+                conId = GetIntegerInput($"A category with the id {conId} doesn't exist. Try again.");
+            }
+
+            var firstNameUpdate = GetUpdateStringInput("Please enter first name or type 0 to keep name");
+            if (firstNameUpdate != "0") contactToUpdate.FirstName = firstNameUpdate;
+
+            var lastNameUpdate = GetUpdateStringInput("Please enter last name or type 0 to keep name");
+            if (lastNameUpdate != "0") contactToUpdate.LastName = firstNameUpdate;
+
+            var phoneUpdate = GetPhoneInput("Please enter new phone number or type 0 to keep number");
+            if (phoneUpdate != "0") contactToUpdate.Number = phoneUpdate;
+
+            contactsController.UpdateContact(contactToUpdate);
         }
 
         private void ProcessGetShiftById()
@@ -209,32 +233,6 @@ namespace ShiftTracker.Ui
         //    contactsController.AddContact(contact);
         //}
 
-
-        //private void ProcessContactUpdate()
-        //{
-        //    contactsController.ViewContacts();
-
-        //    int conId = GetIntegerInput("Please add id of the category you want to update.");
-        //    var contactToUpdate = contactsController.GetContactById(conId);
-
-        //    while (contactToUpdate == null)
-        //    {
-        //        conId = GetIntegerInput($"A category with the id {conId} doesn't exist. Try again.");
-        //    }
-
-        //    var firstNameUpdate = GetUpdateStringInput("Please enter first name or type 0 to keep name");
-        //    if (firstNameUpdate != "0") contactToUpdate.FirstName = firstNameUpdate;
-
-        //    var lastNameUpdate = GetUpdateStringInput("Please enter last name or type 0 to keep name");
-        //    if (lastNameUpdate != "0") contactToUpdate.LastName = firstNameUpdate;
-
-        //    var phoneUpdate = GetPhoneInput("Please enter new phone number or type 0 to keep number");
-        //    if (phoneUpdate != "0") contactToUpdate.Number = phoneUpdate;
-
-        //    contactsController.UpdateContact(contactToUpdate);
-        //}
-
-        
         //private string GetUpdateStringInput(string message)
         //{
         //    Console.WriteLine(message);
