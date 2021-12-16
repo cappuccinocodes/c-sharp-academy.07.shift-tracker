@@ -44,5 +44,13 @@ namespace ShiftTracker.Ui
             var response = client.Execute<Shift>(request);
             Console.WriteLine(response.Content);
         }
+
+        public IRestResponse<Shift> DeleteShift(int id)
+        {
+            var request = new RestRequest($"shifts/{id}", Method.DELETE);
+            var response = client.Execute<Shift>(request);
+            Console.WriteLine(response.Content);
+            return response;
+        }
     }
 }

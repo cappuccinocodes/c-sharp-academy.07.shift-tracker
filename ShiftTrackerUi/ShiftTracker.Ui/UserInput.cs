@@ -18,7 +18,7 @@ namespace ShiftTracker.Ui
                 Console.WriteLine("\nType 0 to Close Application.");
                 Console.WriteLine("Type 1 to View Shifts");
                 Console.WriteLine("Type 2 to Add Shift");
-                //Console.WriteLine("Type 3 to Delete Category");
+                Console.WriteLine("Type 3 to Delete Category");
                 //Console.WriteLine("Type 4 to Update Category");
                 //Console.WriteLine("Type 5 to View Contacts");
                 //Console.WriteLine("Type 6 to Add Contacts");
@@ -47,7 +47,7 @@ namespace ShiftTracker.Ui
                         ProcessAddShift();
                         break;
                     case 3:
-                        ProcessGetShiftById();
+                        ProcessDeleteShift();
                         break;
                     case 4:
                         //ProcessDeleteShift();
@@ -97,6 +97,90 @@ namespace ShiftTracker.Ui
             shiftsService.AddShift(shift);
         }
 
+        private void ProcessDeleteShift()
+        {
+            shiftsService.GetShifts();
+
+            int shiftId = GetIntegerInput("Please add id of the category you want to delete.");
+
+            var shiftResponse = shiftsService.DeleteShift(shiftId);
+
+            while (shiftResponse.StatusCode == HttpStatusCode.NotFound)
+            {
+                shiftId = GetIntegerInput($"A shift with the id {shiftId} doesn't exist. Try again.");
+            }
+        }
+
+        private void ProcessGetShiftById()
+        {
+            shiftsService.GetShifts();
+
+            int shiftId = GetIntegerInput("Please add id of the shift you want to view.");
+
+            var shiftResponse = shiftsService.GetShiftById(shiftId);
+
+            while (shiftResponse.StatusCode == HttpStatusCode.NotFound)
+            {
+                shiftId = GetIntegerInput($"A shift with the id {shiftId} doesn't exist. Try again.");
+            }
+        }
+
+        private string GetStringInput(string message)
+        {
+            Console.WriteLine(message);
+            string input = Console.ReadLine();
+
+            while (!Validator.IsStringValid(input))
+            {
+                Console.WriteLine("\nInvalid input");
+                input = Console.ReadLine();
+            }
+
+            return input;
+        }
+
+        private int GetIntegerInput(string message)
+        {
+            Console.WriteLine(message);
+            string idInput = Console.ReadLine();
+
+            while (!Validator.IsIdValid(idInput))
+            {
+                Console.WriteLine("\nInvalid input");
+                idInput = Console.ReadLine();
+            }
+
+            return Int32.Parse(idInput);
+        }
+
+        private DateTime GetDateTimeInput(string message)
+        {
+            Console.WriteLine(message);
+            string idInput = Console.ReadLine();
+
+            while (!Validator.IsDateTimeValid(idInput))
+            {
+                Console.WriteLine("\nInvalid date");
+                idInput = Console.ReadLine();
+            }
+
+            return DateTime.Parse(idInput);
+        }
+
+        private decimal GetMoneyInput(string message)
+        {
+            Console.WriteLine(message);
+            string idInput = Console.ReadLine();
+
+            while (!Validator.IsMoneyValid(idInput))
+            {
+                Console.WriteLine("\nInvalid pay");
+                idInput = Console.ReadLine();
+            }
+
+            return decimal.Parse(idInput);
+        }
+
         //private void ProcessCategoryUpdate()
         //{
         //    contactsController.ViewCategories();
@@ -125,20 +209,6 @@ namespace ShiftTracker.Ui
         //    contactsController.AddContact(contact);
         //}
 
-        //private void ProcessDeleteShift()
-        //{
-        //    shiftsService.GetShifts();
-
-        //    int contactId = GetIntegerInput("Please add id of the category you want to delete.");
-        //    var contactToDelete = shiftsService.DeleteShift(contactId);
-
-        //    while (contactToDelete == null)
-        //    {
-        //        contactId = GetIntegerInput($"A category with the id {contactId} doesn't exist. Try again.");
-        //    }
-
-        //    contactsController.DeleteContact(contactToDelete);
-        //}
 
         //private void ProcessContactUpdate()
         //{
@@ -164,34 +234,7 @@ namespace ShiftTracker.Ui
         //    contactsController.UpdateContact(contactToUpdate);
         //}
 
-        private void ProcessGetShiftById()
-        {
-            shiftsService.GetShifts();
-
-            int shiftId = GetIntegerInput("Please add id of the shift you want to view.");
-            
-            var shiftResponse = shiftsService.GetShiftById(shiftId);
-
-            while (shiftResponse.StatusCode == HttpStatusCode.NotFound)
-            {
-                shiftId = GetIntegerInput($"A shift with the id {shiftId} doesn't exist. Try again.");
-            }
-        }
-
-        private string GetStringInput(string message)
-        {
-            Console.WriteLine(message);
-            string input = Console.ReadLine();
-
-            while (!Validator.IsStringValid(input))
-            {
-                Console.WriteLine("\nInvalid input");
-                input = Console.ReadLine();
-            }
-
-            return input;
-        }
-
+        
         //private string GetUpdateStringInput(string message)
         //{
         //    Console.WriteLine(message);
@@ -204,48 +247,6 @@ namespace ShiftTracker.Ui
         //    }
 
         //    return input;
-        //}
-
-       private int GetIntegerInput(string message)
-        {
-            Console.WriteLine(message);
-            string idInput = Console.ReadLine();
-
-            while (!Validator.IsIdValid(idInput))
-            {
-                Console.WriteLine("\nInvalid input");
-                idInput = Console.ReadLine();
-            }
-
-            return Int32.Parse(idInput);
-        }
-
-       private DateTime GetDateTimeInput(string message)
-       {
-           Console.WriteLine(message);
-           string idInput = Console.ReadLine();
-
-           while (!Validator.IsDateTimeValid(idInput))
-           {
-               Console.WriteLine("\nInvalid date");
-               idInput = Console.ReadLine();
-           }
-
-           return DateTime.Parse(idInput);
-       }
-
-       private decimal GetMoneyInput(string message)
-       {
-           Console.WriteLine(message);
-           string idInput = Console.ReadLine();
-
-           while (!Validator.IsMoneyValid(idInput))
-           {
-               Console.WriteLine("\nInvalid pay");
-               idInput = Console.ReadLine();
-           }
-
-           return decimal.Parse(idInput);
-       }
+        
     }
 }
