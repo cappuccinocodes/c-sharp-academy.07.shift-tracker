@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DataContext>(opt =>
-    opt.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;;Initial Catalog=Shifts; Integrated Security=true;"));
+    opt.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Initial Catalog=Shifts; Integrated Security=true;"));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

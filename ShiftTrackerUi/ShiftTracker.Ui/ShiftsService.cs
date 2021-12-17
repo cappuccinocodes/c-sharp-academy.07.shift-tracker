@@ -52,5 +52,13 @@ namespace ShiftTracker.Ui
             Console.WriteLine(response.Content);
             return response;
         }
+
+        public void UpdateShift(Shift shift)
+        {
+            var request = new RestRequest("shifts", Method.PUT);
+            request.AddJsonBody(JsonConvert.SerializeObject(shift));
+            var response = client.Execute<Shift>(request);
+            Console.WriteLine(response.Content);
+        }
     }
 }

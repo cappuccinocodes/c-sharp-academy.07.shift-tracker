@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.Diagnostics;
 using System.Net;
 using RestSharp;
 
@@ -8,6 +9,7 @@ namespace ShiftTracker.Ui
     internal class UserInput
     {
         private ShiftsService shiftsService = new();
+
         internal void MainMenu()
         {
             bool closeApp = false;
@@ -19,7 +21,7 @@ namespace ShiftTracker.Ui
                 Console.WriteLine("Type 1 to View Shifts");
                 Console.WriteLine("Type 2 to Add Shift");
                 Console.WriteLine("Type 3 to Delete Category");
-                //Console.WriteLine("Type 4 to Update Category");
+                Console.WriteLine("Type 4 to Update Category");
                 //Console.WriteLine("Type 5 to View Contacts");
                 //Console.WriteLine("Type 6 to Add Contacts");
                 //Console.WriteLine("Type 7 to Delete Contact");
@@ -84,15 +86,15 @@ namespace ShiftTracker.Ui
             shiftsService.GetShifts();
 
             Shift shift = new();
-            shift.Start = GetDateTimeInput("Please add shift start");
-            shift.End = GetDateTimeInput("Please add shift end");
+            shift.Start = GetDateTimeInput("Please add shift start", "Add");
+            shift.End = GetDateTimeInput("Please add shift end", "Add");
 
             while (Validator.IsEndDateValid(shift.Start, shift.End))
-                shift.End = GetDateTimeInput("End date has to be after start date. Try again.");
+                shift.End = GetDateTimeInput("End date has to be after start date. Try again.", "Add");
 
-            shift.Location = GetStringInput("Please add shift location.");
+            shift.Location = GetStringInput("Please add shift location.", "Add");
             shift.Minutes = Helpers.CalculateDuration(shift.Start, shift.End);
-            shift.Pay = GetMoneyInput("Please add your pay for this shift.");
+            shift.Pay = GetMoneyInput("Please add your pay for this shift.", "Add");
 
             shiftsService.AddShift(shift);
         }
@@ -115,49 +117,60 @@ namespace ShiftTracker.Ui
         {
             shiftsService.GetShifts();
 
-            int conId = GetIntegerInput("Please add id of the shift you want to update.");
-            var contactToUpdate = ById(conId);
+            var shiftToUpdate = ProcessGetShiftById();
 
-            while (contactToUpdate == null)
-            {
-                conId = GetIntegerInput($"A category with the id {conId} doesn't exist. Try again.");
-            }
+            var startUpdate = GetDateTimeInput("Please enter new start date or type 0 to keep start date", "Update");
+            if (startUpdate != DateTime.MinValue) shiftToUpdate.Start = startUpdate;
 
-            var firstNameUpdate = GetUpdateStringInput("Please enter first name or type 0 to keep name");
-            if (firstNameUpdate != "0") contactToUpdate.FirstName = firstNameUpdate;
+            var endUpdate = GetDateTimeInput("Please enter new end date or type 0 to keep end date", "Update");
+            if (endUpdate != DateTime.MinValue) shiftToUpdate.End = endUpdate;
 
-            var lastNameUpdate = GetUpdateStringInput("Please enter last name or type 0 to keep name");
-            if (lastNameUpdate != "0") contactToUpdate.LastName = firstNameUpdate;
+            var payUpdate = GetMoneyInput("Please enter new phone number or type 0 to keep pay value", "Update");
+            if (payUpdate != Decimal.MinValue) shiftToUpdate.Pay = payUpdate;
 
-            var phoneUpdate = GetPhoneInput("Please enter new phone number or type 0 to keep number");
-            if (phoneUpdate != "0") contactToUpdate.Number = phoneUpdate;
+            var location = GetStringInput("Please enter new phone number or type 0 to keep number", "Update");
+            if (location != "0") shiftToUpdate.Location = location;
 
-            contactsController.UpdateContact(contactToUpdate);
+            shiftsService.UpdateShift(shiftToUpdate);
         }
 
-        private void ProcessGetShiftById()
+        private Shift ProcessGetShiftById()
         {
             shiftsService.GetShifts();
 
-            int shiftId = GetIntegerInput("Please add id of the shift you want to view.");
+            int shiftId = GetIntegerInput("Please add id of the shift");
 
             var shiftResponse = shiftsService.GetShiftById(shiftId);
 
             while (shiftResponse.StatusCode == HttpStatusCode.NotFound)
             {
                 shiftId = GetIntegerInput($"A shift with the id {shiftId} doesn't exist. Try again.");
+                shiftResponse = shiftsService.GetShiftById(shiftId);
             }
+
+            return shiftResponse.Data;
         }
 
-        private string GetStringInput(string message)
+        private string GetStringInput(string message, string operation)
         {
             Console.WriteLine(message);
             string input = Console.ReadLine();
 
-            while (!Validator.IsStringValid(input))
+            if (operation.Equals("Update"))
             {
-                Console.WriteLine("\nInvalid input");
-                input = Console.ReadLine();
+                while (input != "0" && !Validator.IsStringValid(input))
+                {
+                    Console.WriteLine("\nInvalid date");
+                    input = Console.ReadLine();
+                }
+            }
+            else
+            {
+                while (!Validator.IsStringValid(input))
+                {
+                    Console.WriteLine("\nInvalid input");
+                    input = Console.ReadLine();
+                }
             }
 
             return input;
@@ -177,32 +190,60 @@ namespace ShiftTracker.Ui
             return Int32.Parse(idInput);
         }
 
-        private DateTime GetDateTimeInput(string message)
+        private DateTime GetDateTimeInput(string message, string operation)
         {
             Console.WriteLine(message);
-            string idInput = Console.ReadLine();
+            string input = Console.ReadLine();
 
-            while (!Validator.IsDateTimeValid(idInput))
+            if (input == "0")
+                return DateTime.MinValue;
+
+            if (operation.Equals("Update"))
             {
-                Console.WriteLine("\nInvalid date");
-                idInput = Console.ReadLine();
+                while (input != "0" && !Validator.IsDateTimeValid(input))
+                {
+                    Console.WriteLine("\nInvalid date");
+                    input = Console.ReadLine();
+                }
             }
-
-            return DateTime.Parse(idInput);
+            else
+            {
+                while (!Validator.IsDateTimeValid(input))
+                {
+                    Console.WriteLine("\nInvalid date");
+                    input = Console.ReadLine();
+                }
+            }
+            
+            return DateTime.Parse(input);
         }
 
-        private decimal GetMoneyInput(string message)
+        private decimal GetMoneyInput(string message, string operation)
         {
             Console.WriteLine(message);
-            string idInput = Console.ReadLine();
+            string input = Console.ReadLine();
 
-            while (!Validator.IsMoneyValid(idInput))
+            if (input == "0")
+                return Decimal.MinValue;
+
+            if (operation.Equals("Update"))
             {
-                Console.WriteLine("\nInvalid pay");
-                idInput = Console.ReadLine();
+                while (input != "0" && !Validator.IsMoneyValid(input))
+                {
+                    Console.WriteLine("\nInvalid date");
+                    input = Console.ReadLine();
+                }
+            }
+            else
+            {
+                while (!Validator.IsMoneyValid(input))
+                {
+                    Console.WriteLine("\nInvalid date");
+                    input = Console.ReadLine();
+                }
             }
 
-            return decimal.Parse(idInput);
+            return decimal.Parse(input);
         }
 
         //private void ProcessCategoryUpdate()
@@ -232,19 +273,5 @@ namespace ShiftTracker.Ui
 
         //    contactsController.AddContact(contact);
         //}
-
-        //private string GetUpdateStringInput(string message)
-        //{
-        //    Console.WriteLine(message);
-        //    string input = Console.ReadLine();
-
-        //    while (!Validator.IsUpdateStringValid(input))
-        //    {
-        //        Console.WriteLine("\nInvalid input");
-        //        input = Console.ReadLine();
-        //    }
-
-        //    return input;
-        
-    }
+        }
 }
