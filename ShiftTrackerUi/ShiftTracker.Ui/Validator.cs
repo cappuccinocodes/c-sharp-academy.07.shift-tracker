@@ -53,7 +53,7 @@ namespace ShiftTracker.Ui
 
         internal static bool IsEndDateValid(DateTime start, DateTime end)
         {   
-            bool isValid = start > end ? true: false ;
+            bool isValid = start < end ? true: false ;
             
             return isValid;
         }
