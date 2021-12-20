@@ -60,6 +60,11 @@ namespace ShiftTracker.Ui
 
         internal static bool IsMoneyValid(string pay)
         {
+            if (String.IsNullOrEmpty(pay))
+            {
+                return false;
+            }
+
             Regex rgx = new (@"^[0-9]{0,6}(\.[0-9]{1,2})?$");
             bool isValid = rgx.IsMatch(pay) ? true : false;
 
